@@ -1,0 +1,27 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+   {% for listing in listings %}
+        {% if listing.item.watched == "yes" %}
+        <div class="card">
+            <a  class="nav-link" href="{% url 'product' listing.item.id %}">
+                <h2>{{ listing.item.title }}</h2>
+            </a>
+            {% if listing.item.image_url %}
+                <a  class="nav-link" href="{% url 'product' listing.item.id %}">
+                    <img src="{{ listing.item.image_url.url }}" class="images">
+                </a>
+            {% endif %}
+            <p>{{ listing.description }}</p>
+            {% if listing.item.status == 'open' %}
+            <p><strong>Auction OnGoing</strong></p>
+            {% else %}
+            <p><strong>Auction Closed</strong></p>
+            {% endif %}
+        </div>
+        {% endif %}
+   {% empty %}
+    <p><strong>No Watched Items Available</strong></p>
+   {% endfor %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% for categ in categories %}
+    <div class="card">
+        {% if categ.image_url %}
+                <img src="{{ categ.image_url.url }}" class="images">
+        {% endif %}
+        <p>
+            <a href="{% url 'product' categ.id %}" class="listing_title">{{ categ.title }}</a>
+        </p>
+        <p>{{ categ.description }}</p>
+    </div>
+    {% empty %}
+        <p><strong>No Categories Available</strong></p>
+    {% endfor %}
+{% endblock %}

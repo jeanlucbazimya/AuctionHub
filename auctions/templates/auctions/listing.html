@@ -1,0 +1,92 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ listing.title }}</h2>
+    {% if listing.image_url %}
+        <img src="{{ listing.image_url.url }}" class="imagesL">
+        
+    {% endif %}
+    <p> Created at {{ listing.time }}</p>
+    <p><strong>Description:</strong> {{ listing.description }}</p>
+
+    {% if listing.status == 'open' %}
+        {% if listing.category %}
+            <p><strong>Category:</strong> {{ listing.category }}</p>
+        {% endif %}
+        <p><strong>Start:</strong> ${{ listing.start }}</p>
+        {% if top %}
+            <p><strong>Current Bid:</strong> ${{ top }}</p>
+        {% else %}
+        <p><strong>Current Bid:</strong> No Bids Yet</p>
+        {% endif %}
+        {% if listing.owner != user %}
+            <form class="form-spacing" action="{% url 'product' listing.id %}" method="post">
+            {% csrf_token %}
+                <input type="number" name="bid" placeholder="bid">
+                <button type="Submit" class="styled_button">Place Bid</button>
+            </form>
+        {% endif %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <form class="form-spacing" action="{% url 'comment' listing.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="c_section" placeholder="Add a comment" rows="10" cols="50"></textarea>
+            <button type="submit" class="styled_button">Post</button>
+        </form>
+        {% if comments %}
+            <strong>{{ comments|length }} Comments</strong>
+            {% for comment in comments %}
+                <p><strong>{{ comment.commenter }}:</strong> {{ comment.comment }}</p>
+            {% endfor %}
+        {% else %}
+            No comments yet
+        {% endif %}
+        {% if listing.owner != user %}
+            {% if watched%}
+                <p>Added To WatchList</p>
+                <form action="{% url 'remove_watch' %}" method="post">
+                {% csrf_token %}
+                    <input type="hidden" name="listing" value="{{ listing.id }}">
+                    <button type="submit" class="styled_button">Remove from WatchList</button>
+                </form>
+            {% else %}
+                <form action="{% url 'watch' %}" method="post">
+                {% csrf_token %}
+                    <input type="hidden" name="listing" value="{{ listing.id }}">
+                    <button type="submit" class="styled_button">Add To WatchList</button>
+                </form>
+            {% endif %}
+        {% endif %}
+        {% if listing.owner == user %}
+                <form action="{% url 'status'%}" method="post">
+                {% csrf_token %}
+                    <input type="hidden" name="close" value="{{ listing.id }}">
+                    <button type="submit" class="styled_button">Close Auction</button>
+
+                </form>
+        {% endif %}
+    {% else %}
+        {% if winner == user %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Congratulations!</strong> Your won the auction
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+            {% if user == listing.owner %}
+                <p><strong>Won by:</strong> {{ winner }}</p>
+                <p><strong>Closing Bid:</strong> ${{ top }}</p>
+            {% else %}
+            {% endif %}
+       
+        <h2>Auction Closed</h2>
+        {% endif%}
+    {% endif%}
+
+    
+    
+{% endblock %}

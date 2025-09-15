@@ -1,0 +1,18 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    <form action="{% url 'auct_list' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <label>Title:</label>
+        <input type="text" name="title" required>
+        <lable>Description:</lable>
+        <input type="text" name="describe" required>
+        <lable>Bid:</lable>
+        <input type="number" name="starter" required>
+        <lable>Category:</lable>
+        <input type="text" name="category">
+        <lable>Image:</lable>
+        <input type="file" name="image">
+        <button type="submit" class="styled_button">Submit</button>
+    </form>
+{% endblock %}
